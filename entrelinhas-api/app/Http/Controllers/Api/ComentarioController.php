@@ -3,47 +3,32 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Comentario;
 use Illuminate\Http\Request;
 
 class ComentarioController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'conteudo'=>'required|string',
+            'commentable_id'=>'required',
+            'commentable_type'=>'required'
+        ]);
+
+        $comentario = Comentario::create([
+            'conteudo'=>$request->conteudo,
+            'user_id'=>auth()->id(),
+            'commentable_id'=>$request->commentable_id,
+            'commentable_type'=>$request->commentable_type
+        ]);
+
+        return response()->json($comentario,201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function destroy(Comentario $comentario)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $comentario->delete();
+        return response()->json(['message'=>'Comentário removido']);
     }
 }
